@@ -10,28 +10,24 @@ exports.signup = async (req, res) => {
 		let errMsg = {};
 
 		if (!/^[a-zA-Z0-9]{2,10}$/.test(name)) {
-			errMsg.name = {
+			return res.status(400).json({
 				message: '最少 2 個字元，最長 10 字元，不得包含特殊字元與空白',
 				status: false
-			}
+			});
 		}
 
 		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-			errMsg.email = {
+			return res.status(400).json({
 				message: '需符合 Email 格式',
 				status: false
-			}
+			});
 		}
 
 		if (!/^[\S]{8,10}$/.test(password)) {
-			errMsg.password = {
+			return res.status(400).json({
 				message: '最短 8 字元，最大 10 字元',
 				status: false
-			}
-		}
-
-		if (Object.keys(errMsg).length > 0) {
-			return res.status(400).json(errMsg);
+			});
 		}
 
 		if (await M_users.getUsersByEmail(email)) {
@@ -70,21 +66,17 @@ exports.login = async (req, res) => {
 		let errMsg = {};
 
 		if (!email) {
-			errMsg.email = {
-				message: '信箱請勿空白',
+			return res.status(409).json({
+				message: "信箱請勿空白",
 				status: false
-			}
+			});
 		}
 
 		if (!password) {
-			errMsg.email = {
-				message: '密碼不得為空',
+			return res.status(409).json({
+				message: "密碼不得為空",
 				status: false
-			}
-		}
-
-		if (Object.keys(errMsg).length > 0) {
-			return res.status(401).json(errMsg);
+			});
 		}
 
 		const user = await M_users.getUsersByEmail(email); //抓取使用者
