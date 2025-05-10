@@ -23,7 +23,12 @@ exports.Users = new EntitySchema({
 			nullable: false,
 			comment: '加密後的密碼',
 		},
-		username: {
+		description: {
+			type: "text",
+			nullable: true,
+			comment: "個人自我介紹描述"
+		},
+		name: {
 			type: 'varchar',
 			length: 50,
 			unique: true,
@@ -82,7 +87,7 @@ exports.Users = new EntitySchema({
 	indices: [
 		{
 			name: 'IDX_USER_USERNAME',
-			columns: ['username'],
+			columns: ['name'],
 		},
 		{
 			name: 'IDX_USER_EMAIL',

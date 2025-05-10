@@ -1,5 +1,6 @@
 const M_users = require('../models/users');
 
+/* 取得個人資料 */
 exports.getUser = async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -14,7 +15,7 @@ exports.getUser = async (req, res) => {
 
 		const new_user = {
 			id: Number(user.user_id),
-			name: user.username,
+			name: user.name,
 			email: user.email,
 			description: "個人自我介紹描述",
 			imageUrl: user.avatar_url || "https://fakeimg.pl/250x100/"
@@ -31,4 +32,49 @@ exports.getUser = async (req, res) => {
 			status: false
 		});
 	}
+}
+
+/* 修改個人資料 */
+exports.putUser = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const name = req.body.name.trim();
+		const description = req.body.description.trim();
+
+		if (!id || !name || !description) {
+			return res.status(400).json({
+				message: '欄位格式錯誤',
+				status: false
+			});
+		}
+
+		const user = await M_users.getUserById(id);
+
+		/* 檢查是否存在資料庫 */
+		if (!user) {
+			return res.status(404).json({
+				message: '使用者不存在',
+				status: false
+			})
+		}
+
+		user.name = name;
+		user.description = description;
+
+		/* 更新資料庫 */
+		const result = await M_users.putUser(user);
+
+		res.status(200).json({
+			message: '更新成功',
+			status: true
+		});
+
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
+	}
+
 }

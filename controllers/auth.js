@@ -38,7 +38,7 @@ exports.signup = async (req, res) => {
 		}
 
 		const post = {
-			username: name,
+			name,
 			email,
 			password_hash: await bcrypt.hash(password, 10),
 		}
@@ -101,7 +101,7 @@ exports.login = async (req, res) => {
 		const userInfo = {
 			id: user.user_id,
 			email: user.email,
-			name: user.username
+			name: user.name
 		}
 
 		const token = jwt.sign(userInfo, process.env.JWT_SECRET, {
@@ -118,7 +118,7 @@ exports.login = async (req, res) => {
 				token
 			},
 			user: {
-				name: user.username
+				name: user.name
 			}
 		});
 

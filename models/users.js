@@ -31,14 +31,21 @@ const updateLastLogin = async (id) => {
 	);
 }
 
+/* 新增使用者資料 */
 const postUsers = async (data) => {
 	const result = await UsersRepo.save(data);
 	return result;
 }
 
+/* 更新使用者資料 */
+const putUser = async (data) => {
+	return await UsersRepo.save(data);
+}
+
 module.exports = {
 	getUsers,
 	postUsers,
+	putUser,
 	getUserById,
 	getUsersByEmail,
 	updateLastLogin
