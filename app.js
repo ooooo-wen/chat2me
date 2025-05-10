@@ -4,11 +4,34 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require('cors');
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 
 var app = express();
+
+/* 設定多個允許的來源 */
+const allowedOrigins = [
+	'https://chat2me.vercel.app',
+	'http://localhost:3000',      // 本地開發環境（如果前端在本地）
+	'http://127.0.0.1:3000'      // 本地開發環境的另一種格式
+];
+
+/* 設定 CORS 允許來自上述來源的請求 */
+const corsOptions = {
+	origin: function (origin, callback) {
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {  // 如果是允許的來源，或是沒有 origin（如本地測試），就允許
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'), false);
+		}
+	},
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],  // 設定允許的方法
+	credentials: true,  // 若需要允許跨域 cookies，設為 true
+};
+
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
