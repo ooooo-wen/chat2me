@@ -1,8 +1,34 @@
 version: '3.8'
 
 services:
+  # 🔥 HTTPS 代理 + 憑證服務
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: ${PROJECT_NAME}-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./vhost.d:/etc/nginx/vhost.d     # ✅ 關鍵 volume
+      - ./html:/usr/share/nginx/html     # ✅ 關鍵 volume
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: ${PROJECT_NAME}-letsencrypt
+    environment:
+      NGINX_PROXY_CONTAINER: ${NGINX_PROXY_CONTAINER}
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./vhost.d:/etc/nginx/vhost.d     # ✅ 必須跟 nginx-proxy 共用
+      - ./html:/usr/share/nginx/html     # ✅ 必須跟 nginx-proxy 共用
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # ✅ 你的資料庫
   db:
     image: postgres:alpine
+    container_name: ${PROJECT_NAME}-postgres
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -12,13 +38,19 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  # ✅ 你的 Node.js App
   app:
     build: .
-    ports:
-      - "${PORT}:${PORT}"
+    container_name: ${PROJECT_NAME}-app
     env_file: .env
     depends_on:
       - db
+    expose:
+      - "${PORT}"
+    environment:
+      - VIRTUAL_HOST=chat2me.ubddns.org
+      - LETSENCRYPT_HOST=chat2me.ubddns.org
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
 volumes:
   db-data:
