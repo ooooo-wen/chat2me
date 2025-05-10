@@ -4,30 +4,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const cors = require('cors');
 
 const authRouter = require('./routes/auth');
 
 var app = express();
-
-const allowedOrigins = [
-	'http://localhost:3000',
-	'https://chat2me.vercel.app/'
-];
-
-app.use(cors({
-	origin: function (origin, callback) {
-		// 如果 origin 是在允許清單，或是沒有 origin（像 Postman 或 curl）
-		if (!origin || allowedOrigins.includes(origin)) {
-			callback(null, true);
-		} else {
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
-	methods: ['GET', 'POST', 'PUT', 'DELETE'],	// 允許的方法
-	credentials: true,							// 若有使用 cookie 或需驗證
-	allowedHeaders:['Content-Type', 'Authorization']
-}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

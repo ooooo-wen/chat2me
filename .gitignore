@@ -62,3 +62,6 @@ typings/
 
 # SSL
 certs/
+
+#docker-compose local
+docker-compose-local.yml
