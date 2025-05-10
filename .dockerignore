@@ -1,5 +1,25 @@
+# 忽略 Node.js 相關
 node_modules
 npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# 忽略環境設定
+.env
+.env.local
+
+# 忽略 Docker 自己的檔案
 Dockerfile
 .dockerignore
-.env
+docker-compose.yml
+
+# 忽略憑證和 Nginx 資料（這是關鍵）
+certs
+vhost.d
+html
+
+# 忽略 Log 和暫存檔
+*.log
+tmp
+.cache
+dist
