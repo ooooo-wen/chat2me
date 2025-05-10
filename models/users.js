@@ -3,7 +3,15 @@ const UsersRepo = AppDataSource.getRepository('Users');
 
 const getUsers = async () => {
 	const users = await UsersRepo.find();
+
+	return users;
 }
+
+const getUserById = async (id) => {
+	const user = await UsersRepo.findOne({ where: { user_id: id } });
+	return user;
+};
+
 
 const getUsersByEmail = async (email) => {
 	const form = await UsersRepo.findOne({
@@ -23,14 +31,15 @@ const updateLastLogin = async (id) => {
 	);
 }
 
-
 const postUsers = async (data) => {
 	const result = await UsersRepo.save(data);
 	return result;
 }
 
 module.exports = {
+	getUsers,
 	postUsers,
+	getUserById,
 	getUsersByEmail,
 	updateLastLogin
 }

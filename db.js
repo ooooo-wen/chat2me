@@ -1,5 +1,6 @@
 const { DataSource } = require('typeorm');
 const { Users } = require('./entity/users');
+const { Posts } = require('./entity/posts');
 
 
 const AppDataSource = new DataSource({
@@ -12,7 +13,8 @@ const AppDataSource = new DataSource({
 	synchronize: true,					// 每次執行都覆蓋
 	logging: false,						// 在 console 顯示指令
 	entities: [							//選擇有用的 entities (entity)
-		Users
+		Users,
+		Posts
 	],
 	migrations: [],						//版控
 });
