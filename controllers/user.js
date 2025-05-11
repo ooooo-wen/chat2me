@@ -6,6 +6,13 @@ exports.getUser = async (req, res) => {
 		const { id } = req.params;
 		const user = await M_users.getUserById(id);
 
+		if (req.user.id !== id) {
+			return res.status(403).json({
+				message: '沒有權限訪問',
+				status: false
+			});
+		}
+
 		if (!user) {
 			return res.status(400).json({
 				message: '發生錯誤',
@@ -44,6 +51,20 @@ exports.putUser = async (req, res) => {
 		if (!id || !name || !description) {
 			return res.status(400).json({
 				message: '欄位格式錯誤',
+				status: false
+			});
+		}
+
+		if (req.user.id !== id) {
+			return res.status(403).json({
+				message: '沒有權限訪問',
+				status: false
+			});
+		}
+
+		if (await M_users.getUserByName(name)) {
+			return res.status(409).json({
+				message: '該名稱已存在資料庫',
 				status: false
 			});
 		}

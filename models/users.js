@@ -12,6 +12,14 @@ const getUserById = async (id) => {
 	return user;
 };
 
+const getUserByName = async (name) => {
+	const exists = await UsersRepo.findOne({
+		where: { name: name },
+		attributes: ['id'], // 僅選擇 id 欄位，減少資料庫負載
+	});
+	return !!exists; // 將查詢結果轉換為布林值 (true 表示存在，false 表示不存在)
+}
+
 
 const getUsersByEmail = async (email) => {
 	const form = await UsersRepo.findOne({
@@ -47,6 +55,7 @@ module.exports = {
 	postUsers,
 	putUser,
 	getUserById,
+	getUserByName,
 	getUsersByEmail,
 	updateLastLogin
 }
