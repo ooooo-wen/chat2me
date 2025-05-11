@@ -35,6 +35,8 @@ exports.getUser = async (req, res) => {
 		});
 
 	} catch (error) {
+		console.log(error);
+		console.log(req.params);
 		res.status(500).json({
 			message: '伺服器錯誤',
 			status: false
@@ -93,6 +95,7 @@ exports.putUser = async (req, res) => {
 
 	} catch (error) {
 		console.log(error);
+		console.log(req.body);
 		res.status(500).json({
 			message: '伺服器錯誤',
 			status: false
