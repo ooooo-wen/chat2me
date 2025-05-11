@@ -1,4 +1,5 @@
 const AppDataSource = require('../db');
+const { Not } = require('typeorm');
 const UsersRepo = AppDataSource.getRepository('Users');
 
 const getUsers = async () => {
@@ -12,10 +13,13 @@ const getUserById = async (id) => {
 	return user;
 };
 
-const getUserByName = async (name) => {
+const repeatName = async (id, name) => {
 	const exists = await UsersRepo.findOne({
-		where: { name: name },
-		attributes: ['id'], // 僅選擇 id 欄位，減少資料庫負載
+		where: {
+			name: name,
+			user_id: Not(id)
+		},
+		attributes: ['user_id'], // 僅選擇 id 欄位，減少資料庫負載
 	});
 	return !!exists; // 將查詢結果轉換為布林值 (true 表示存在，false 表示不存在)
 }
@@ -55,7 +59,7 @@ module.exports = {
 	postUsers,
 	putUser,
 	getUserById,
-	getUserByName,
+	repeatName,
 	getUsersByEmail,
 	updateLastLogin
 }

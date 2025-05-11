@@ -4,14 +4,14 @@ const M_users = require('../models/users');
 exports.getUser = async (req, res) => {
 	try {
 		const { id } = req.params;
-		
+
 		if (req.user.id !== id) {
 			return res.status(403).json({
 				message: '沒有權限訪問',
 				status: false
 			});
 		}
-		
+
 		const user = await M_users.getUserById(id);
 
 		if (!user) {
@@ -25,7 +25,7 @@ exports.getUser = async (req, res) => {
 			id: Number(user.user_id),
 			name: user.name,
 			email: user.email,
-			description: "個人自我介紹描述",
+			description: user.description || "個人自我介紹描述",
 			imageUrl: user.avatar_url || "https://fakeimg.pl/250x100/"
 		};
 
@@ -49,7 +49,7 @@ exports.putUser = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const name = (req.body.name ?? '').trim();
-        const description = (req.body.description ?? '').trim();
+		const description = (req.body.description ?? '').trim();
 
 		if (!id || !name || !description) {
 			return res.status(400).json({
@@ -65,7 +65,7 @@ exports.putUser = async (req, res) => {
 			});
 		}
 
-		if (await M_users.getUserByName(name)) {
+		if (await M_users.repeatName(id, name) && name !== req.user.name) {
 			return res.status(409).json({
 				message: '該名稱已存在資料庫',
 				status: false
@@ -87,6 +87,7 @@ exports.putUser = async (req, res) => {
 
 		/* 更新資料庫 */
 		const result = await M_users.putUser(user);
+		console.log(result);
 
 		res.status(200).json({
 			message: '更新成功',
