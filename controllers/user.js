@@ -4,14 +4,15 @@ const M_users = require('../models/users');
 exports.getUser = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const user = await M_users.getUserById(id);
-
+		
 		if (req.user.id !== id) {
 			return res.status(403).json({
 				message: '沒有權限訪問',
 				status: false
 			});
 		}
+		
+		const user = await M_users.getUserById(id);
 
 		if (!user) {
 			return res.status(400).json({
@@ -45,8 +46,8 @@ exports.getUser = async (req, res) => {
 exports.putUser = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const name = req.body.name.trim();
-		const description = req.body.description.trim();
+		const name = (req.body.name ?? '').trim();
+        const description = (req.body.description ?? '').trim();
 
 		if (!id || !name || !description) {
 			return res.status(400).json({
