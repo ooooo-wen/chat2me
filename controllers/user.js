@@ -1,4 +1,5 @@
 const M_users = require('../models/users');
+const path = require('path');
 
 /* 取得個人資料 */
 exports.getUser = async (req, res) => {
@@ -72,15 +73,7 @@ exports.putUser = async (req, res) => {
 			});
 		}
 
-		const user = await M_users.getUserById(id);
-
-		/* 檢查是否存在資料庫 */
-		if (!user) {
-			return res.status(404).json({
-				message: '使用者不存在',
-				status: false
-			})
-		}
+		const user = req.dbUser;
 
 		user.name = name;
 		user.description = description;
@@ -104,3 +97,28 @@ exports.putUser = async (req, res) => {
 	}
 
 }
+
+/* 上傳個人圖片 */
+exports.upload = async (req, res) => {
+	try {
+		if (!req.file) {
+			return res.status(400).json({ error: '請上傳符合條件的圖片檔案' });
+		}
+		const filePath = `/uploads/${req.file.filename}`; // 提供給前端與儲存資料庫
+		const user = req.dbUser;
+		user.avatar_url = filePath;
+		const result = await M_users.putUser(user);
+
+		res.status(200).json({
+			message: '檔案上傳成功',
+			filePath: filePath
+		});
+	} catch (error) {
+		console.log(error);
+		console.log(req.body);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
+	}
+};

@@ -36,8 +36,7 @@ exports.Users = new EntitySchema({
 			comment: '使用者名稱/暱稱',
 		},
 		avatar_url: {
-			type: 'varchar',
-			length: 255,
+			type: 'text',
 			nullable: true,
 			comment: '頭像圖片連結',
 		},

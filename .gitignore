@@ -65,3 +65,6 @@ certs/
 
 #docker-compose local
 docker-compose-local.yml
+
+#檔案上傳
+uploads/

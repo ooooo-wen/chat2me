@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const fs = require('fs');
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
@@ -31,11 +32,19 @@ const corsOptions = {
 	credentials: true,  // 若需要允許跨域 cookies，設為 true
 };
 
+/* 設定檔案上傳的資料夾 */
+const uploadPath = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadPath)) {
+	fs.mkdirSync(uploadPath);
+}
+
 app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use('/uploads', express.static('uploads')); //可以允許前端看的資料夾
+
 
 app.use(logger('dev'));
 app.use(express.json());
