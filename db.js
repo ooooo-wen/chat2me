@@ -1,7 +1,5 @@
 const { DataSource } = require('typeorm');
-const { Users } = require('./entity/users');
-const { Posts } = require('./entity/posts');
-
+const path = require('path');
 
 const AppDataSource = new DataSource({
 	type: "postgres",					// 資料庫類型
@@ -13,8 +11,7 @@ const AppDataSource = new DataSource({
 	synchronize: true,					// 每次執行都覆蓋
 	logging: false,						// 在 console 顯示指令
 	entities: [							//選擇有用的 entities (entity)
-		Users,
-		Posts
+		path.join(__dirname, 'entity', '*.js')
 	],
 	migrations: [],						//版控
 });

@@ -1,7 +1,7 @@
 const { EntitySchema } = require('typeorm');
 
-module.exports = new EntitySchema({
-	name: "Post",
+exports.Posts = new EntitySchema({
+	name: "Posts",
 	tableName: "posts",
 	columns: {
 		post_id: {
@@ -82,13 +82,13 @@ module.exports = new EntitySchema({
 	relations: {
 		user: {
 			type: "many-to-one",
-			target: "User",
+			target: "Users",
 			joinColumn: { name: "user_id" },
 			onDelete: "CASCADE"
 		},
 		forum: {
 			type: "many-to-one",
-			target: "Forum",
+			target: "Forums",
 			joinColumn: { name: "forum_id" },
 			onDelete: "CASCADE"
 		}
