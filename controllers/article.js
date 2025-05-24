@@ -6,7 +6,7 @@ const createPost = async (req, res) => {
 		const user_id = req.user.id;
 
 		if (!forum_id || !title || !content || typeof tag === 'undefined') {
-			return res.status(400).json({ message: '缺少必要欄位：forum_id, title, content, tag' });
+			return res.status(400).json({ message: '缺少必要欄位' });
 		}
 
 		// 類型檢查
