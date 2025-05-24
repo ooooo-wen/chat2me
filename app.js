@@ -9,6 +9,7 @@ const fs = require('fs');
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
+const articleRouter = require('./routes/article');
 
 var app = express();
 
@@ -53,7 +54,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1', userRouter);
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/article', articleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

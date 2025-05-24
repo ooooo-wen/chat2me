@@ -1,6 +1,4 @@
 const M_users = require('../models/users');
-const M_posts = require('../models/posts');
-const path = require('path');
 
 /* 取得個人資料 */
 exports.getUser = async (req, res) => {

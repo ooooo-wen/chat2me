@@ -86,20 +86,21 @@ exports.Posts = new EntitySchema({
 			joinColumn: { name: "user_id" },
 			onDelete: "CASCADE"
 		},
-		forum: {
-			type: "many-to-one",
-			target: "Forums",
-			joinColumn: { name: "forum_id" },
-			onDelete: "CASCADE"
-		}
+		// forum: {
+		// 	type: "many-to-one",
+		// 	target: "Forums",
+		// 	joinColumn: { name: "forum_id" },
+		// 	onDelete: "CASCADE"
+		// }
 	},
 	indices: [
-		{
-			columns: ["forum_id", "created_at"],
-			name: "IDX_forum_created",
-			synchronize: true,
-			comment: "用於看板貼文列表"
-		},
+		/* 等有新增看板的功能 */
+		// {
+		// 	columns: ["forum_id", "created_at"],
+		// 	name: "IDX_forum_created",
+		// 	synchronize: true,
+		// 	comment: "用於看板貼文列表"
+		// },
 		{
 			columns: ["user_id", "created_at"],
 			name: "IDX_user_created",
