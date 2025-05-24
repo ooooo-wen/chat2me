@@ -9,6 +9,7 @@ const getPostsByUserId = async (user_id) => {
 	return posts;
 };
 
+/* 新增貼文 */
 const createPost = async ({ user_id, forum_id, title, content, img_url = [], tag = [] }) => {
 	// 新增主貼文
 	const post = await PostsRepo.save({ user_id, forum_id, title, content });
@@ -47,7 +48,32 @@ const createPost = async ({ user_id, forum_id, title, content, img_url = [], tag
 	return post;
 };
 
+/* 上傳圖片 */
+const upload = async (files) => {
+	if (!files || files.length === 0) {
+		throw new Error('未上傳任何檔案');
+	}
+
+	const imageUrls = [];
+
+	for (const file of files) {
+		const url = `${file.destination}${file.filename}`;
+
+		const media = MediaRepo.create({
+			media_type: 'image',
+			url,
+			thumbnail_url: null,
+		});
+
+		await MediaRepo.save(media);
+		imageUrls.push(url);
+	}
+
+	return imageUrls;
+};
+
 module.exports = {
 	getPostsByUserId,
 	createPost,
+	upload
 };

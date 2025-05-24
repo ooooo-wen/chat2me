@@ -52,6 +52,38 @@ const createPost = async (req, res) => {
 	}
 };
 
+const upload = async (req, res) => {
+	try {
+		const files = req.files;
+
+		if (!files || files.length === 0) {
+			return res.status(400).json({
+				status: false,
+				message: '未上傳任何檔案',
+			});
+		}
+
+		console.log(files);
+
+		const imageUrls = await M_posts.upload(files);
+
+		return res.status(200).json({
+			message: '上傳成功',
+			status: true,
+			data: {
+				imageUrl: imageUrls
+			}
+		});
+	} catch (error) {
+		console.error('上傳錯誤:', error);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+}
+
 module.exports = {
-	createPost
+	createPost,
+	upload
 };

@@ -103,7 +103,8 @@ exports.upload = async (req, res) => {
 		if (!req.file) {
 			return res.status(400).json({ error: '請上傳符合條件的圖片檔案' });
 		}
-		const filePath = `/uploads/${req.file.filename}`; // 提供給前端與儲存資料庫
+
+		const filePath = `/${req.file.destination}${req.file.filename}`; // 提供給前端與儲存資料庫
 		const user = req.dbUser;
 		user.avatar_url = filePath;
 		const result = await M_users.putUser(user);
