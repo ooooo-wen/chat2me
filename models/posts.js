@@ -9,6 +9,21 @@ const getPostsByUserId = async (user_id) => {
 	return posts;
 };
 
+/* 取得熱門文章 20 筆資料 */
+const getHotPosts = async (cursor, limit) => {
+	const posts = await PostsRepo
+		.createQueryBuilder('post')
+		.leftJoinAndSelect('post.user', 'user')		// 關聯 user
+		// .leftJoinAndSelect('post.forum', 'forum')	// 關聯 看板
+		.where('post.is_deleted = :isDeleted', { isDeleted: false })
+		.orderBy('post.like_count', 'DESC') // 熱門依據
+		.skip(cursor)
+		.take(limit)
+		.getMany();
+
+	return posts;
+}
+
 /* 新增貼文 */
 const createPost = async ({ user_id, forum_id, title, content, img_url = [], tag = [] }) => {
 	// 新增主貼文
@@ -75,5 +90,6 @@ const upload = async (files) => {
 module.exports = {
 	getPostsByUserId,
 	createPost,
-	upload
+	upload,
+	getHotPosts
 };

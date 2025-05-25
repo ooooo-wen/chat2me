@@ -1,5 +1,39 @@
 const M_posts = require('../models/posts');
 
+const getHotPost = async (req, res) => {
+	try {
+		const cursor = parseInt(req.query.cursor) || 0;
+		const limit = parseInt(req.query.limit) || 20;
+		const posts = await M_posts.getHotPosts(cursor, limit);
+
+		const articleList = posts.map((post) => ({
+			forumTitle: '工作', // 目前你還沒設 forum 關聯，先填固定值
+			name: post.user.name,
+			articleTitle: post.title,
+			articleContent: post.content,
+			icon: post.user.avatar_url || null,
+			count: {
+				like: post.like_count,
+				collect: 0, // collect 還沒實作
+				comment: post.comment_count,
+			},
+			postDate: post.created_at.toISOString().split('T')[0],
+		}));
+
+		res.status(200).json({
+			status: true,
+			data: articleList
+		});
+	} catch (error) {
+		console.log(error);
+		console.log(req.body);
+		res.status(400).json({
+			message: '發生錯誤',
+			status: false
+		});
+	}
+}
+
 const createPost = async (req, res) => {
 	try {
 		const { forum_id, title, content, img_url = [], tag } = req.body;
@@ -85,5 +119,6 @@ const upload = async (req, res) => {
 
 module.exports = {
 	createPost,
-	upload
+	upload,
+	getHotPost
 };
