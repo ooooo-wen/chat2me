@@ -10,6 +10,7 @@ const fs = require('fs');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const articleRouter = require('./routes/article');
+const forumRouter = require('./routes/forum');
 
 var app = express();
 
@@ -50,6 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/article', articleRouter);
+app.use('/api/v1/forum', forumRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

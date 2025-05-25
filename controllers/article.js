@@ -5,9 +5,10 @@ const getHotPost = async (req, res) => {
 		const cursor = parseInt(req.query.cursor) || 0;
 		const limit = parseInt(req.query.limit) || 20;
 		const posts = await M_posts.getHotPosts(cursor, limit);
+		// console.log(posts);
 
 		const articleList = posts.map((post) => ({
-			forumTitle: '工作', // 目前你還沒設 forum 關聯，先填固定值
+			forumTitle: post.forum.forum_name,
 			name: post.user.name,
 			articleTitle: post.title,
 			articleContent: post.content,

@@ -14,7 +14,7 @@ const getHotPosts = async (cursor, limit) => {
 	const posts = await PostsRepo
 		.createQueryBuilder('post')
 		.leftJoinAndSelect('post.user', 'user')		// 關聯 user
-		// .leftJoinAndSelect('post.forum', 'forum')	// 關聯 看板
+		.leftJoinAndSelect('post.forum', 'forum')	// 關聯 看板
 		.where('post.is_deleted = :isDeleted', { isDeleted: false })
 		.orderBy('post.like_count', 'DESC') // 熱門依據
 		.skip(cursor)
