@@ -1,7 +1,13 @@
 const AppDataSource = require('../db');
 const ForumsRepo = AppDataSource.getRepository('Forums');
 
-exports.createForum = async (data) => {
+exports.getForums = async () => {
+    const forums = await ForumsRepo.find();
+
+    return forums;
+}
+
+exports.postForum = async (data) => {
     const { forum_name, description = null, is_official, is_nsfw } = data;
 
     // 驗證 forum_name 是否重複

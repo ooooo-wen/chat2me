@@ -22,6 +22,11 @@ exports.Forums = new EntitySchema({
 			nullable: true,
 			comment: "看板描述",
 		},
+		type: {
+			type: "text",
+			nullable: true,
+			comment: "看板類別",
+		},
 		creation_date: {
 			type: "timestamp",
 			nullable: false,
