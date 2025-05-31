@@ -8,11 +8,12 @@ const getHotPost = async (req, res) => {
 		// console.log(posts);
 
 		const articleList = posts.map((post) => ({
+			id: post.post_id,
 			forumTitle: post.forum.forum_name,
 			name: post.user.name,
 			articleTitle: post.title,
 			articleContent: post.content,
-			icon: post.user.avatar_url || null,
+			icon: post.forum.forum_name,
 			count: {
 				like: post.like_count,
 				collect: 0, // collect 還沒實作
