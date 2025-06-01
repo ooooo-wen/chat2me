@@ -36,6 +36,42 @@ const getHotPost = async (req, res) => {
 	}
 }
 
+const getLatestPost = async (req, res) => {
+	try {
+		const cursor = parseInt(req.query.cursor) || 0;
+		const limit = parseInt(req.query.limit) || 20;
+		const posts = await M_posts.getLatestPosts(cursor, limit);
+		// console.log(posts);
+
+		const articleList = posts.map((post) => ({
+			id: post.post_id,
+			forumTitle: post.forum.forum_name,
+			name: post.user.name,
+			articleTitle: post.title,
+			articleContent: post.content,
+			icon: post.forum.forum_name,
+			count: {
+				like: post.like_count,
+				collect: 0, // collect 還沒實作
+				comment: post.comment_count,
+			},
+			postDate: post.created_at.toISOString().split('T')[0],
+		}));
+
+		res.status(200).json({
+			status: true,
+			data: articleList
+		});
+	} catch (error) {
+		console.log(error);
+		console.log(req.body);
+		res.status(400).json({
+			message: '發生錯誤',
+			status: false
+		});
+	}
+}
+
 const createPost = async (req, res) => {
 	try {
 		const { forum_id, title, content, img_url = [], tag } = req.body;
@@ -122,5 +158,6 @@ const upload = async (req, res) => {
 module.exports = {
 	createPost,
 	upload,
-	getHotPost
+	getHotPost,
+	getLatestPost
 };

@@ -24,6 +24,21 @@ const getHotPosts = async (cursor, limit) => {
 	return posts;
 }
 
+/* 取得最新文章 20 筆資料 */
+const getLatestPosts = async (cursor, limit) => {
+	const posts = await PostsRepo
+		.createQueryBuilder('post')
+		.leftJoinAndSelect('post.user', 'user')      // 關聯 user
+		.leftJoinAndSelect('post.forum', 'forum')    // 關聯 看板
+		.where('post.is_deleted = :isDeleted', { isDeleted: false })
+		.orderBy('post.created_at', 'DESC')          // 依據建立時間排序，最新的在前
+		.skip(cursor)
+		.take(limit)
+		.getMany();
+
+	return posts;
+}
+
 /* 新增貼文 */
 const createPost = async ({ user_id, forum_id, title, content, img_url = [], tag = [] }) => {
 	// 新增主貼文
@@ -91,5 +106,6 @@ module.exports = {
 	getPostsByUserId,
 	createPost,
 	upload,
-	getHotPosts
+	getHotPosts,
+	getLatestPosts
 };
