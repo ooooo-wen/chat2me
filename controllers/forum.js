@@ -18,6 +18,24 @@ exports.getAll = async (req, res) => {
 	}
 }
 
+exports.popular = async (req, res) => {
+	try {
+
+		const forums = await M_fourns.getPopular();
+
+		res.status(200).json({
+			status: true,
+			data: forums
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
+	}
+}
+
 exports.postForum = async (req, res) => {
 	try {
 		const { forum_name, type, description, is_official, is_nsfw } = req.body;
