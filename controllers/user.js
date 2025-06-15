@@ -122,3 +122,30 @@ exports.upload = async (req, res) => {
 		});
 	}
 };
+
+/* 取得個人牆資料 */
+exports.profile = async (req, res) => {
+	try {
+
+		const profileData = await M_users.profile(req.dbUser.user_id);
+
+		if (!profileData) {
+			return res.status(404).json({
+				status: false,
+				message: "找不到使用者"
+			});
+		}
+
+		return res.status(200).json({
+			status: true,
+			data: profileData
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
+	}
+
+}
