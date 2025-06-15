@@ -139,6 +139,45 @@ const getPost = async (req, res) => {
 	}
 }
 
+const deletePost = async (req, res) => {
+	const { dbUser } = req;         // 登入的使用者
+	const { id } = req.params;      // 要刪除的文章 ID
+
+	try {
+		/* 先找出該文章 */
+		const post = await M_posts.getPost(id);
+
+		if (!post) {
+			return res.status(404).json({
+				status: false,
+				message: '找不到貼文'
+			});
+		}
+
+		// 檢查這篇文章是不是使用者自己的
+		if (post.user_id !== dbUser.user_id) {
+			return res.status(403).json({
+				status: false,
+				message: '你沒有權限刪除這篇文章'
+			});
+		}
+
+		/* 刪除文章 */
+		await M_posts.deletePost(id);
+
+		return res.status(200).json({
+			status: true,
+			message: '刪除成功'
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			status: false,
+			message: '伺服器錯誤'
+		});
+	}
+};
+
 const createPost = async (req, res) => {
 	try {
 		const { forum_id, title, content, img_url = [], tag } = req.body;
@@ -227,5 +266,6 @@ module.exports = {
 	upload,
 	getHotPost,
 	getLatestPost,
-	getPost
+	getPost,
+	deletePost
 };

@@ -91,12 +91,20 @@ const getPost = async (id) => {
 		.leftJoinAndSelect('comments.user', 'commentUser')        // ← 留言者
 		.leftJoinAndSelect('comments.parent_comment', 'parent')   // ← 父留言（巢狀）
 		.where('post.post_id = :id', { id })
+		.andWhere('post.is_deleted = :isDeleted', { isDeleted: false })
 		.orderBy('comments.created_at', 'ASC') // 可選：依留言時間排序
 		.getOne();
 
 	return post;
 };
 
+/* 刪除文章 */
+const deletePost = async (id) => {
+	await PostsRepo.update(
+		{ post_id: id },              // WHERE 條件
+		{ is_deleted: true }          // 刪除文章
+	);
+}
 
 
 /* 上傳圖片 */
@@ -129,5 +137,6 @@ module.exports = {
 	upload,
 	getHotPosts,
 	getLatestPosts,
-	getPost
+	getPost,
+	deletePost
 };
