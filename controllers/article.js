@@ -338,6 +338,32 @@ const like = async (req, res) => {
 
 }
 
+const unlike = async (req, res) => {
+	try {
+		const { user_id } = req.dbUser;
+		const { post_id } = req.body;
+
+		const result = await M_postLikes.unlikePost(user_id, post_id);
+		if (!result) {
+			return res.status(404).json({
+				status: false,
+				message: '尚未按讚，無法取消'
+			});
+		}
+
+		res.status(200).json({
+			status: true,
+			message: '成功'
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+}
+
 module.exports = {
 	createPost,
 	upload,
@@ -346,5 +372,6 @@ module.exports = {
 	getPost,
 	deletePost,
 	putPost,
-	like
+	like,
+	unlike
 };

@@ -22,11 +22,11 @@ exports.likePost = async (user_id, post_id) => {
 };
 
 /* 取消按讚 */
-exports.unlikePost = async (userId, postId) => {
+exports.unlikePost = async (user_id, post_id) => {
 	const existing = await likeRepo.findOne({
 		where: {
-			user: { user_id: userId },
-			post: { post_id: postId },
+			user: { user_id: user_id },
+			post: { post_id: post_id },
 		},
 	});
 	if (!existing) return null;
