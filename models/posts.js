@@ -154,7 +154,6 @@ const updatePost = async ({ post_id, user_id, title, content, img_url = [], tag 
 	return post;
 };
 
-
 /* 刪除文章 */
 const deletePost = async (id) => {
 	await PostsRepo.update(

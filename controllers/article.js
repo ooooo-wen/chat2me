@@ -1,4 +1,5 @@
 const M_posts = require('../models/posts');
+const M_postLikes = require('../models/postLikes');
 const dayjs = require('dayjs');
 
 const getHotPost = async (req, res) => {
@@ -310,6 +311,33 @@ const upload = async (req, res) => {
 	}
 }
 
+const like = async (req, res) => {
+	try {
+		const { user_id } = req.dbUser;
+		const { post_id } = req.body;
+
+		const result = await M_postLikes.likePost(user_id, post_id);
+		if (!result) {
+			return res.status(409).json({
+				status: false,
+				message: '已經按讚過了'
+			});
+		}
+
+		res.status(201).json({
+			status: true,
+			message: '成功按讚'
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+
+}
+
 module.exports = {
 	createPost,
 	upload,
@@ -317,5 +345,6 @@ module.exports = {
 	getLatestPost,
 	getPost,
 	deletePost,
-	putPost
+	putPost,
+	like
 };
