@@ -4,6 +4,8 @@ const PostTagsRepo = AppDataSource.getRepository('PostTags');
 const MediaRepo = AppDataSource.getRepository('Media');
 const TagsRepo = AppDataSource.getRepository('Tags');
 const CommentsRepo = AppDataSource.getRepository('Comments');
+const PostLikesRepo = AppDataSource.getRepository('PostLikes');
+const SavedPostsRepo = AppDataSource.getRepository('SavedPosts');
 
 const getPostsByUserId = async (user_id) => {
 	const posts = await PostsRepo.find({ where: { user_id } });
@@ -94,6 +96,22 @@ const getPost = async (id) => {
 		.andWhere('post.is_deleted = :isDeleted', { isDeleted: false })
 		.orderBy('comments.created_at', 'ASC') // 可選：依留言時間排序
 		.getOne();
+
+	if (!post) return null;
+
+	// 計算按讚數
+	const likeCount = await PostLikesRepo.count({
+		where: { post: { post_id: post.post_id } }
+	});
+
+	// 計算收藏數
+	const collectCount = await SavedPostsRepo.count({
+		where: { post: { post_id: post.post_id } }
+	});
+
+	// 把按讚數和收藏數放到 post 上，方便 controller 讀取
+	post.like_count = likeCount;
+	post.collect_count = collectCount;
 
 	return post;
 };

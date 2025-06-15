@@ -84,15 +84,14 @@ const getPost = async (req, res) => {
 			return res.status(404).json({ status: false, message: "找不到貼文" });
 		}
 
-		/* 整理 tag */
+		// ...整理 tag 與留言資料（不變）
+
 		const tags = (post.postTags || []).map(pt => pt.tag?.tag_name).filter(Boolean);
 
-		/* 整理留言資料 */
 		const topLevelComments = post.comments
-			.filter(c => !c.parent_comment) // 第一層留言
+			.filter(c => !c.parent_comment)
 			.map((c, index) => {
 				const level = `B${index + 1}`;
-
 				const replies = post.comments
 					.filter(r => r.parent_comment?.comment_id === c.comment_id)
 					.map((r, rIdx) => ({
@@ -117,14 +116,14 @@ const getPost = async (req, res) => {
 			status: true,
 			data: {
 				forumTitle: post.forum.forum_name,
-				followed: false, // 可根據登入使用者補上
+				followed: false,
 				articleTitle: post.title,
 				articleContent: post.content,
 				tags,
 				postDate: dayjs(post.created_at).format('YYYY-MM-DD'),
 				count: {
 					like: post.like_count,
-					collect: 0, // 可另外查詢使用者收藏資料
+					collect: post.collect_count,
 					comment: post.comment_count || post.comments.length,
 				},
 				comments: topLevelComments
@@ -133,13 +132,14 @@ const getPost = async (req, res) => {
 		res.status(200).json(response);
 
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(500).json({
 			message: '伺服器錯誤',
 			status: false
 		});
 	}
-}
+};
+
 
 const deletePost = async (req, res) => {
 	const { dbUser } = req;         // 登入的使用者
