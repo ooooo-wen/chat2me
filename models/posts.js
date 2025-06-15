@@ -98,6 +98,63 @@ const getPost = async (id) => {
 	return post;
 };
 
+/* 更新文章 */
+const updatePost = async ({ post_id, user_id, title, content, img_url = [], tag = [] }) => {
+	const post = await PostsRepo.findOne({
+		where: { post_id },
+		relations: ['user'],
+	});
+
+	if (!post || post.user_id !== user_id) {
+		return null; // 沒有這篇或不是作者
+	}
+
+	// 更新主貼文
+	post.title = title;
+	post.content = content;
+	await PostsRepo.save(post);
+
+	// 刪除舊圖片
+	await MediaRepo.delete({ post: { post_id } });
+
+	// 新增新圖片
+	const imageEntities = img_url.map((url) => ({
+		url,
+		media_type: 'image',
+		post: { post_id },
+	}));
+
+	if (imageEntities.length > 0) {
+		await MediaRepo.save(imageEntities);
+	}
+
+	// 刪除舊標籤關聯
+	await PostTagsRepo.delete({ post: { post_id } });
+
+	// 新增標籤
+	const tagEntities = [];
+
+	for (const tagName of tag) {
+		let tagEntity = await TagsRepo.findOne({ where: { tag_name: tagName } });
+
+		if (!tagEntity) {
+			tagEntity = await TagsRepo.save({ tag_name: tagName });
+		}
+
+		tagEntities.push({
+			post: { post_id },
+			tag: { tag_id: tagEntity.tag_id },
+		});
+	}
+
+	if (tagEntities.length > 0) {
+		await PostTagsRepo.save(tagEntities);
+	}
+
+	return post;
+};
+
+
 /* 刪除文章 */
 const deletePost = async (id) => {
 	await PostsRepo.update(
@@ -105,7 +162,6 @@ const deletePost = async (id) => {
 		{ is_deleted: true }          // 刪除文章
 	);
 }
-
 
 /* 上傳圖片 */
 const upload = async (files) => {
@@ -138,5 +194,6 @@ module.exports = {
 	getHotPosts,
 	getLatestPosts,
 	getPost,
-	deletePost
+	deletePost,
+	updatePost
 };

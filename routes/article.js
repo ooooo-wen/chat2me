@@ -10,6 +10,7 @@ router.get('/:id', C_article.getPost);
 router.post('/', JWT_header, C_article.createPost);
 router.post('/upload', JWT_header, upload.multi('image', 'post'), C_article.upload);
 router.delete('/:id', JWT_header, C_article.deletePost);
+router.put('/:id', JWT_header, C_article.putPost);
 
 
 module.exports = router;
