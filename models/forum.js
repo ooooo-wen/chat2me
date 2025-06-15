@@ -37,3 +37,9 @@ exports.postForum = async (data) => {
 	const saved = await ForumsRepo.save(newForum);
 	return saved;
 };
+
+exports.getForumById = async (id) => {
+	const forum = await ForumsRepo.findOne({ where: { forum_id: id } });
+
+	return forum;
+}

@@ -1,4 +1,6 @@
 const M_fourns = require('../models/forum');
+const M_users = require('../models/users');
+const M_sub = require('../models/forumSubscriptions');
 
 exports.getAll = async (req, res) => {
 	try {
@@ -78,3 +80,34 @@ exports.postForum = async (req, res) => {
 		return res.status(500).json({ message: '伺服器錯誤，請稍後再試' });
 	}
 };
+
+exports.follow = async (req, res) => {
+	try {
+		const { forumId, userId } = req.body;
+		const user = await M_users.getUserById(userId);
+		const forum = await M_fourns.getForumById(forumId);
+
+		if (!user || !forum) {
+			return res.status(400).json({
+				status: false,
+				message: "發生錯誤"
+			});
+		}
+
+		const result = await M_sub.subscribeForum(user, forum);
+		if (result.exists) {
+			return res.status(409).json({
+				status: false,
+				message: '已經有追蹤看板了'
+			});
+		}
+
+		res.status(201).json({
+			status: true,
+			message: "追蹤成功"
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ message: "Internal server error" });
+	}
+}
