@@ -3,6 +3,7 @@ const PostsRepo = AppDataSource.getRepository('Posts');
 const PostTagsRepo = AppDataSource.getRepository('PostTags');
 const MediaRepo = AppDataSource.getRepository('Media');
 const TagsRepo = AppDataSource.getRepository('Tags');
+const CommentsRepo = AppDataSource.getRepository('Comments');
 
 const getPostsByUserId = async (user_id) => {
 	const posts = await PostsRepo.find({ where: { user_id } });
@@ -78,6 +79,26 @@ const createPost = async ({ user_id, forum_id, title, content, img_url = [], tag
 	return post;
 };
 
+/* 取得單一文章 */
+const getPost = async (id) => {
+	const post = await PostsRepo
+		.createQueryBuilder('post')
+		.leftJoinAndSelect('post.user', 'user')
+		.leftJoinAndSelect('post.forum', 'forum')
+		.leftJoinAndSelect('post.postTags', 'postTags')
+		.leftJoinAndSelect('postTags.tag', 'tag')
+		.leftJoinAndSelect('post.comments', 'comments')           // ← 新增留言
+		.leftJoinAndSelect('comments.user', 'commentUser')        // ← 留言者
+		.leftJoinAndSelect('comments.parent_comment', 'parent')   // ← 父留言（巢狀）
+		.where('post.post_id = :id', { id })
+		.orderBy('comments.created_at', 'ASC') // 可選：依留言時間排序
+		.getOne();
+
+	return post;
+};
+
+
+
 /* 上傳圖片 */
 const upload = async (files) => {
 	if (!files || files.length === 0) {
@@ -107,5 +128,6 @@ module.exports = {
 	createPost,
 	upload,
 	getHotPosts,
-	getLatestPosts
+	getLatestPosts,
+	getPost
 };

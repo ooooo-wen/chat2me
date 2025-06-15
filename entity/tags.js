@@ -35,4 +35,11 @@ exports.Tags = new EntitySchema({
 			comment: "用於熱門標籤排序",
 		},
 	],
+	relations: {
+		postTags: {
+			type: "one-to-many",
+			target: "PostTags",
+			inverseSide: "tag", // 對應 PostTags 裡的 tag 關聯
+		},
+	},
 });

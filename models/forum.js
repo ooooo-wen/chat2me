@@ -8,7 +8,7 @@ exports.getForums = async () => {
 }
 
 exports.postForum = async (data) => {
-    const { forum_name, description = null, is_official, is_nsfw } = data;
+    const { forum_name, type, description = null, is_official, is_nsfw } = data;
 
     // 驗證 forum_name 是否重複
     const exists = await ForumsRepo.findOneBy({ forum_name });
@@ -20,6 +20,7 @@ exports.postForum = async (data) => {
 
     // 建立 entity
     const newForum = ForumsRepo.create({
+        type,
         forum_name,
         description,
         is_official,

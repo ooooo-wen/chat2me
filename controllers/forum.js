@@ -20,7 +20,7 @@ exports.getAll = async (req, res) => {
 
 exports.postForum = async (req, res) => {
 	try {
-		const { forum_name, description, is_official, is_nsfw } = req.body;
+		const { forum_name, type, description, is_official, is_nsfw } = req.body;
 
 		// 驗證必填欄位
 		if (
@@ -35,6 +35,7 @@ exports.postForum = async (req, res) => {
 		}
 
 		const forum = await M_fourns.postForum({
+			type,
 			forum_name,
 			description,
 			is_official,

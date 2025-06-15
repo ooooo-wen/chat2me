@@ -1,4 +1,5 @@
 const M_posts = require('../models/posts');
+const dayjs = require('dayjs');
 
 const getHotPost = async (req, res) => {
 	try {
@@ -67,6 +68,72 @@ const getLatestPost = async (req, res) => {
 		console.log(req.body);
 		res.status(400).json({
 			message: '發生錯誤',
+			status: false
+		});
+	}
+}
+
+const getPost = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const post = await M_posts.getPost(id);
+
+		if (!post) {
+			return res.status(404).json({ status: false, message: "找不到貼文" });
+		}
+
+		/* 整理 tag */
+		const tags = (post.postTags || []).map(pt => pt.tag?.tag_name).filter(Boolean);
+
+		/* 整理留言資料 */
+		const topLevelComments = post.comments
+			.filter(c => !c.parent_comment) // 第一層留言
+			.map((c, index) => {
+				const level = `B${index + 1}`;
+
+				const replies = post.comments
+					.filter(r => r.parent_comment?.comment_id === c.comment_id)
+					.map((r, rIdx) => ({
+						name: r.user?.name || '匿名',
+						avator: r.user?.avatar_url || null,
+						content: r.content,
+						level: `${level}-${rIdx + 1}`,
+						date: dayjs(r.created_at).format('YYYY-MM-DD HH:mm'),
+					}));
+
+				return {
+					name: c.user?.name || '匿名',
+					avator: c.user?.avatar_url || null,
+					content: c.content,
+					level,
+					date: dayjs(c.created_at).format('YYYY-MM-DD HH:mm'),
+					reply: replies
+				};
+			});
+
+		const response = {
+			status: true,
+			data: {
+				forumTitle: post.forum.forum_name,
+				followed: false, // 可根據登入使用者補上
+				articleTitle: post.title,
+				articleContent: post.content,
+				tags,
+				postDate: dayjs(post.created_at).format('YYYY-MM-DD'),
+				count: {
+					like: post.like_count,
+					collect: 0, // 可另外查詢使用者收藏資料
+					comment: post.comment_count || post.comments.length,
+				},
+				comments: topLevelComments
+			}
+		};
+		res.status(200).json(response);
+
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
 			status: false
 		});
 	}
@@ -159,5 +226,6 @@ module.exports = {
 	createPost,
 	upload,
 	getHotPost,
-	getLatestPost
+	getLatestPost,
+	getPost
 };

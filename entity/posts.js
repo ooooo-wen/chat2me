@@ -91,7 +91,19 @@ exports.Posts = new EntitySchema({
 			target: "Forums",
 			joinColumn: { name: "forum_id" },
 			onDelete: "CASCADE"
-		}
+		},
+		postTags: {
+			type: "one-to-many",
+			target: "PostTags",
+			inverseSide: "post",
+			cascade: true,
+		},
+		comments: {
+			type: "one-to-many",
+			target: "Comments",
+			inverseSide: "post",
+			cascade: true,
+		},
 	},
 	indices: [
 		/* 等有新增看板的功能 */
