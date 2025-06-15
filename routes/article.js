@@ -13,6 +13,8 @@ router.delete('/:id', JWT_header, C_article.deletePost);
 router.put('/:id', JWT_header, C_article.putPost);
 router.post('/like', JWT_header, C_article.like);
 router.delete('/like/:id', JWT_header, C_article.unlike);
+router.post('/collection', JWT_header, C_article.save);
+router.delete('/collection/:id', JWT_header, C_article.unsave);
 
 
 module.exports = router;

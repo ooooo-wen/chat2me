@@ -1,5 +1,6 @@
 const M_posts = require('../models/posts');
 const M_postLikes = require('../models/postLikes');
+const M_savePosts = require('../models/savedPosts');
 const dayjs = require('dayjs');
 
 const getHotPost = async (req, res) => {
@@ -364,6 +365,58 @@ const unlike = async (req, res) => {
 	}
 }
 
+const save = async (req, res) => {
+	try {
+		const { user_id } = req.dbUser;
+		const { post_id } = req.body;
+
+		const result = await M_savePosts.savePost(user_id, post_id);
+		if (!result) {
+			return res.status(409).json({
+				status: false,
+				message: '已收藏過此貼文'
+			});
+		}
+
+		res.status(201).json({
+			status: true,
+			message: '成功'
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+};
+
+const unsave = async (req, res) => {
+	try {
+		const { user_id } = req.dbUser;
+		const { post_id } = req.body;
+
+		const result = await M_savePosts.unsavePost(user_id, post_id);
+		if (!result) {
+			return res.status(404).json({
+				status: false,
+				message: '尚未收藏此貼文'
+			});
+		}
+
+		res.status(200).json({
+			status: true,
+			message: '成功'
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+};
+
 module.exports = {
 	createPost,
 	upload,
@@ -373,5 +426,7 @@ module.exports = {
 	deletePost,
 	putPost,
 	like,
-	unlike
+	unlike,
+	save,
+	unsave
 };
