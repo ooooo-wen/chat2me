@@ -94,7 +94,7 @@ exports.follow = async (req, res) => {
 			});
 		}
 
-		const result = await M_sub.subscribeForum(user, forum);
+		const result = await M_sub.subscripForum(user, forum);
 		if (result.exists) {
 			return res.status(409).json({
 				status: false,
@@ -107,7 +107,39 @@ exports.follow = async (req, res) => {
 			message: "追蹤成功"
 		});
 	} catch (err) {
-		console.error(err);
-		res.status(500).json({ message: "Internal server error" });
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
+	}
+}
+
+exports.deleteFlow = async (req, res) => {
+	try {
+
+		const { id } = req.params;
+		const { user_id } = req.dbUser;
+		const subscription = await M_sub.getSubscriptionsForm(id);
+
+		if (!subscription) {
+			return res.status(404).json({
+				status: false,
+				message: '找不到訂閱紀錄',
+			});
+		}
+
+		const result = await M_sub.deleteSubscriptionsForm(id, user_id);
+
+		res.status(200).json({
+			status: true,
+			message: '取消追蹤成功',
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			message: '伺服器錯誤',
+			status: false
+		});
 	}
 }

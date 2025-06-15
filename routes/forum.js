@@ -7,6 +7,7 @@ router.get('/classification', C_forum.getAll);
 router.get('/popular', C_forum.popular);
 router.post('/', C_forum.postForum);
 router.post('/follow', JWT_header, C_forum.follow);
+router.delete('/follow/:id', JWT_header, C_forum.deleteFlow);
 
 
 
