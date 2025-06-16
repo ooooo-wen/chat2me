@@ -36,3 +36,20 @@ exports.deleteSubscriptionsForm = async (id, user_id) => {
 
 	return result;
 }
+
+exports.getSubscribedForumsByUser = async (user_id) => {
+	const subscriptions = await subRepo
+		.createQueryBuilder('subscription')
+		.leftJoinAndSelect('subscription.forum', 'forum')
+		.where('subscription.user_id = :user_id', { user_id: user_id })
+		.getMany();
+
+	const forumList = subscriptions.map(sub => ({
+		forumId: sub.forum.forum_id,
+		forumTitle: sub.forum.forum_name,
+		type: sub.forum.type,
+		description: sub.forum.description
+	}));
+
+	return forumList;
+};

@@ -1,5 +1,6 @@
 const M_users = require('../models/users');
 const M_savedPosts = require('../models/savedPosts');
+const M_sub = require('../models/forumSubscriptions');
 
 /* 取得個人資料 */
 exports.getUser = async (req, res) => {
@@ -160,6 +161,26 @@ exports.article = async (req, res) => {
 			status: true,
 			data: {
 				articleList
+			}
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({
+			status: false,
+			message: '伺服器錯誤'
+		});
+	}
+}
+
+/* 取得個人追蹤看板 */
+exports.forum = async (req, res) => {
+	try {
+		const forumList = await M_sub.getSubscribedForumsByUser(req.dbUser.user_id);
+
+		res.status(200).json({
+			status: true,
+			data: {
+				forumList
 			}
 		});
 	} catch (err) {
