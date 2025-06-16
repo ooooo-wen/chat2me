@@ -7,6 +7,7 @@ const upload = require('../middlewares/upload');
 router.use(JWT_header); //驗證有無登入
 
 router.get('/profile', C_user.profile);
+router.get('/article', C_user.article);
 router.get('/:id', C_user.getUser);
 router.put('/:id', C_user.putUser);
 router.post('/upload', upload.single('image', 'user'), C_user.upload);

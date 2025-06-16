@@ -1,4 +1,5 @@
 const M_users = require('../models/users');
+const M_savedPosts = require('../models/savedPosts');
 
 /* 取得個人資料 */
 exports.getUser = async (req, res) => {
@@ -148,4 +149,24 @@ exports.profile = async (req, res) => {
 		});
 	}
 
+}
+
+/* 取得個人收藏文張 */
+exports.article = async (req, res) => {
+	try {
+		const articleList = await M_savedPosts.getSavedPostsByUser(req.dbUser.user_id);
+
+		res.status(200).json({
+			status: true,
+			data: {
+				articleList
+			}
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({
+			status: false,
+			message: '伺服器錯誤'
+		});
+	}
 }
