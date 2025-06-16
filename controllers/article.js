@@ -1,6 +1,7 @@
 const M_posts = require('../models/posts');
 const M_postLikes = require('../models/postLikes');
 const M_savePosts = require('../models/savedPosts');
+const M_reports = require('../models/reports');
 const dayjs = require('dayjs');
 
 const getHotPost = async (req, res) => {
@@ -139,7 +140,6 @@ const getPost = async (req, res) => {
 		});
 	}
 };
-
 
 const deletePost = async (req, res) => {
 	const { dbUser } = req;         // 登入的使用者
@@ -417,6 +417,37 @@ const unsave = async (req, res) => {
 	}
 };
 
+const reportArticle = async (req, res) => {
+	try {
+		const { articleId, content } = req.body;
+		const user_id = req.dbUser.user_id;
+
+		if (!articleId || !content) {
+			return res.status(400).json({
+				status: false,
+				message: '缺少 articleId 或 content'
+			});
+		}
+
+		await M_reports.createReportForPost({
+			reporterId: user_id,
+			postId: articleId,
+			reason: content,
+		});
+
+		res.status(201).json({
+			status: true,
+			message: '檢舉文章成功'
+		});
+	} catch (error) {
+		console.error(err);
+		return res.status(500).json({
+			message: '伺服器錯誤',
+			status: false,
+		});
+	}
+}
+
 module.exports = {
 	createPost,
 	upload,
@@ -428,5 +459,6 @@ module.exports = {
 	like,
 	unlike,
 	save,
-	unsave
+	unsave,
+	reportArticle
 };
